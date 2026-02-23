@@ -18,32 +18,27 @@ def generate_sigcom_content():
     ]
     
     selected = random.choice(service_data)
-    image_url = f"https://source.unsplash.com/featured/800x600?{selected['img']}"
+    # Using a stable high-quality image link
+    image_url = f"https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80"
     
     # Randomly choose between a 'Post' or a 'Flyer'
     is_flyer = random.choice([True, False])
     
     if is_flyer:
-        # Flyer Prompt: Focused on structured layout and urgency
         prompt = f"""
         Create a DIGITAL FLYER for Sigcom Advertising in Lusaka.
         Topic: {selected['name']}
-        
         Layout Style:
-        - Start with a bold Header using emojis: 📢 [HEADLINE]
-        - Use a section called 'WHY CHOOSE US?' with bullet points.
-        - Include 'Our Motto: We don't do average, we do awesome.'
-        - Emphasize our location: No. 13 Olympia Park, Lusaka.
-        - Contact Footer: +260 960 747309 / +260 775 437 999.
+        - Start with a bold Header: 📢 [HEADLINE]
+        - Section: 'WHY CHOOSE US?' with bullet points.
+        - Include Motto: 'We don't do average, we do awesome.'
+        - Location: No. 13 Olympia Park, Lusaka.
+        - Contact: +260 960 747309 / +260 775 437 999.
         """
     else:
-        # Post Prompt: Focused on engagement and branding
         prompt = f"""
-        Write a professional LinkedIn/Facebook post for Sigcom Advertising.
-        Service: {selected['name']}
-        Motto: 'Be Seen'
-        Tone: Innovative, high-energy.
-        Include our Lusaka location and contact info at the end.
+        Write a professional LinkedIn post for Sigcom Advertising about {selected['name']}.
+        Motto: 'Be Seen'. Include our Lusaka location and contact info.
         """
     
     response = client.models.generate_content(model="gemini-2.0-flash", contents=prompt)
@@ -55,7 +50,7 @@ def post_to_socials(text, image):
     print(f"📤 Posting to Sigcom Socials...")
     result = social.post({
         'post': text,
-        'platforms': ['linkedin', 'facebook', 'twitter'],
+        'platforms': ['linkedin', 'facebook'],
         'mediaUrls': [image]
     })
     return result
@@ -64,5 +59,5 @@ if __name__ == "__main__":
     content, image = generate_sigcom_content()
     print(f"--- CONTENT ---\n{content}\n--- IMAGE ---\n{image}")
     
-    # REMOVE THE '#' BELOW TO GO LIVE
-     print(post_to_socials(content, image))
+    # The line below is now LIVE (no # and correctly indented)
+    print(post_to_socials(content, image))
