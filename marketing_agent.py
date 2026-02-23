@@ -65,4 +65,4 @@ if __name__ == "__main__":
     print(f"--- CONTENT ---\n{content}\n--- IMAGE ---\n{image}")
     
     # REMOVE THE '#' BELOW TO GO LIVE
-    # print(post_to_socials(content, image))
+     print(post_to_socials(content, image))
