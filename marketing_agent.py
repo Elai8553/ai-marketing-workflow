@@ -4,73 +4,65 @@ from google import genai
 from ayrshare import SocialPost
 import random
 
-# Load secret keys
 load_dotenv()
-
-# 1. Initialize Gemini
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-def generate_marketing_content():
-    # Sigcom's specific services from the profile
-    services = [
-        "Outdoor Advertising (Digital & Display Billboards)",
-        "Corporate Branding (Office & Shop Branding)",
-        "Premium Printing Services",
-        "Tear Drop Flags & Feather Banners",
-        "Professional Graphic Design",
-        "Web Development Solutions",
-        "Ad Placement & Management"
+def generate_sigcom_content():
+    # Sigcom services and their matching image search terms
+    service_data = [
+        {"name": "Digital & Display Billboards", "img": "billboard,outdoor"},
+        {"name": "Office & Shop Branding", "img": "office,reception,interior"},
+        {"name": "Vehicle Branding & Wraps", "img": "car,van,wrap"},
+        {"name": "Tear Drop Flags & Banners", "img": "event,banner,flag"},
+        {"name": "Large Format Printing", "img": "printing,industrial"}
     ]
     
-    selected_service = random.choice(services)
+    selected = random.choice(service_data)
+    image_url = f"https://source.unsplash.com/featured/800x600?{selected['img']}"
     
-    # Sigcom Company Context for the AI
-    company_info = """
-    Company: Sigcom Advertising
-    Tagline: 'Be Seen'
-    Location: No. 13 Olympia Park, Lusaka, Zambia
-    Mission: Utilizing latest technologies to tailor design and execute professional solutions that accelerate client ROI.
-    USP: 'We don't do average, we do awesome.' Specialized integrated full-service branding.
-    Contact: +260 960 747309 / +260 775 437 999
-    """
+    # Randomly choose between a 'Post' or a 'Flyer'
+    is_flyer = random.choice([True, False])
     
-    print(f"🤖 Sigcom AI is crafting an ad for: {selected_service}...")
+    if is_flyer:
+        # Flyer Prompt: Focused on structured layout and urgency
+        prompt = f"""
+        Create a DIGITAL FLYER for Sigcom Advertising in Lusaka.
+        Topic: {selected['name']}
+        
+        Layout Style:
+        - Start with a bold Header using emojis: 📢 [HEADLINE]
+        - Use a section called 'WHY CHOOSE US?' with bullet points.
+        - Include 'Our Motto: We don't do average, we do awesome.'
+        - Emphasize our location: No. 13 Olympia Park, Lusaka.
+        - Contact Footer: +260 960 747309 / +260 775 437 999.
+        """
+    else:
+        # Post Prompt: Focused on engagement and branding
+        prompt = f"""
+        Write a professional LinkedIn/Facebook post for Sigcom Advertising.
+        Service: {selected['name']}
+        Motto: 'Be Seen'
+        Tone: Innovative, high-energy.
+        Include our Lusaka location and contact info at the end.
+        """
     
-    prompt = f"""
-    {company_info}
-    
-    Task: Write a high-impact LinkedIn and Facebook post for Sigcom Advertising focusing on {selected_service}.
-    
-    Guidelines:
-    - Start with a catchy hook related to 'Being Seen' or professional branding.
-    - Emphasize how Sigcom helps businesses differentiate their brand in the marketplace.
-    - Mention our location in Lusaka and our commitment to ROI.
-    - End with a strong Call to Action including our phone numbers.
-    - Include 3 hashtags like #SigcomAdvertising #LusakaBusiness #BrandingZambia.
-    - Tone: Professional, innovative, and high-energy.
-    """
-    
-    response = client.models.generate_content(
-        model="gemini-2.0-flash", 
-        contents=prompt
-    )
-    return response.text
+    response = client.models.generate_content(model="gemini-2.0-flash", contents=prompt)
+    return response.text, image_url
 
-# 2. Initialize the Poster
 social = SocialPost(os.getenv("AYRSHARE_API_KEY"))
 
-def post_to_socials(text):
-    print("📤 Sending to social media platforms...")
-    # Update platforms as needed
+def post_to_socials(text, image):
+    print(f"📤 Posting to Sigcom Socials...")
     result = social.post({
         'post': text,
-        'platforms': ['linkedin', 'twitter'] 
+        'platforms': ['linkedin', 'facebook', 'twitter'],
+        'mediaUrls': [image]
     })
     return result
 
 if __name__ == "__main__":
-    content = generate_marketing_content()
-    print(f"\n📝 New Sigcom Ad:\n{content}\n")
+    content, image = generate_sigcom_content()
+    print(f"--- CONTENT ---\n{content}\n--- IMAGE ---\n{image}")
     
-    # Remove the # below to start posting live to your accounts!
-    # print(post_to_socials(content))
+    # REMOVE THE '#' BELOW TO GO LIVE
+    # print(post_to_socials(content, image))
