@@ -19,7 +19,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install google-genai ayrshare python-dotenv
+          pip install google-genai social-post-api python-dotenv
 
       - name: Run Marketing Agent
         env:
