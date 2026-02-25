@@ -1,8 +1,9 @@
-name: Daily AI Marketing Post
+name: Sigcom Marketing Agent
+
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '0 9 * * *'
+    - cron: '15 8 * * *'  # 10:15 AM Lusaka (08:15 UTC)
+  workflow_dispatch:      # Allows manual testing
 
 jobs:
   build:
@@ -12,13 +13,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.9'
 
       - name: Install dependencies
         run: |
-          pip install google-genai python-dotenv social-post-api
+          pip install google-genai ayrshare python-dotenv
 
       - name: Run Marketing Agent
         env:
