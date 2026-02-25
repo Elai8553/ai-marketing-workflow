@@ -5,7 +5,8 @@ from ayrshare import SocialPost
 import random
 
 load_dotenv()
-# Using the 1.5 Flash model for better stability on the Free Tier
+
+# Initialize Gemini Client
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def generate_sigcom_content():
@@ -16,14 +17,17 @@ def generate_sigcom_content():
         {"name": "Large Format Printing", "img": "printing,press"}
     ]
     selected = random.choice(service_data)
+    
+    # Static high-quality image link
     image_url = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80"
     
     prompt = f"Create a professional LinkedIn post for Sigcom Advertising, Lusaka about {selected['name']}. Motto: 'Be Seen'. Location: No. 13 Olympia Park. Contact: +260 960 747309."
     
-    # MOVED TO 1.5 FLASH HERE
+    # FIXED MODEL NAME FOR SDK
     response = client.models.generate_content(model="gemini-1.5-flash", contents=prompt)
     return response.text, image_url
 
+# Initialize Ayrshare
 social = SocialPost(os.getenv("AYRSHARE_API_KEY"))
 
 def post_to_socials(text, image):
@@ -40,7 +44,7 @@ if __name__ == "__main__":
         content, image = generate_sigcom_content()
         print(f"--- CONTENT GENERATED ---\n{content}")
         
-        # POSTING TO SOCIALS
+        # ACTUALLY POSTING
         status = post_to_socials(content, image)
         print(f"--- AYRSHARE RESPONSE ---\n{status}")
         
